@@ -14,10 +14,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _ageController = TextEditingController();
   final _emailController = TextEditingController();
   User _user = User();
-  List<String> _namesList = List<String>();
-  List<int> _ageList = List<int>();
-  List<String> _emailList = List<String>();
   bool _controll = false;
+  List<User> _userList = <User>[];
 
   @override
   void dispose() {
@@ -113,9 +111,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     saveUser();
                     if (_controll) {
                       setState(() {
-                        _namesList.add(_user.name);
-                        _ageList.add(_user.age);
-                        _emailList.add(_user.email);
+                        _userList.add(_user);
+                        _user = User();
                       });
                     }
                   },
@@ -132,24 +129,23 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 8),
               Expanded(
                 child: ListView.builder(
-                  itemCount: _namesList.length,
+                  itemCount: _userList.length,
                   itemBuilder: (context, index) {
-                    String name = _namesList[index];
-                    String email = _emailList[index];
-                    int age = _ageList[index];
+                    String name = _userList[index].name;
+                    String email = _userList[index].email;
+                    int age = _userList[index].age;
+
                     return ListTile(
                       onLongPress: () {
                         setState(() {
-                          _namesList.remove(_user.name);
-                          _ageList.remove(_user.age);
-                          _emailList.remove(_user.email);
+                          _userList.remove(_user);
                         });
                       },
                       leading: CircleAvatar(
                         backgroundImage: NetworkImage(
                             'https://www.gravatar.com/avatar/$index?d=robohash'),
                       ),
-                      title: Text('$name , $age'),
+                      title: Text('$name, $age'),
                       subtitle: Text('$email'),
                     );
                   },
@@ -164,6 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void saveUser() {
     _form.currentState.save();
+
     snackValidate();
   }
 
